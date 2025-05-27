@@ -14,14 +14,9 @@ namespace webapi.EF.Models
     }
     public class EnumWorkType
     {
-        public WorkType Id { get; set; }
+        public byte Id { get; set; } // ← Match the foreign key type
         public string Name { get; set; }
         [JsonIgnore]
-        public virtual Contact Contact { get; set; }
-        public EnumWorkType(WorkType id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
+        public virtual ICollection<Contact> Contacts { get; set; } = new List<Contact>();
     }
 }

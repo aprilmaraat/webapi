@@ -19,22 +19,18 @@ namespace webapi.EF
             {
                 entity.ToTable("Contact");
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id)
-                    .HasColumnType("uniqueidentifier")
-                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.Id).HasColumnType("uniqueidentifier").ValueGeneratedOnAdd();
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
                 entity.HasIndex(e => e.Email).IsUnique();
                 entity.Property(e => e.FullName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.MobileNumber).IsRequired().HasMaxLength(15);
                 entity.Property(e => e.Location).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.WorkType).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("GETUTCDATE()");
-                entity.Property(e => e.WorkTypeId);
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime").HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.WorkTypeId).HasColumnType("tinyint");
+
                 entity.HasOne(e => e.WorkType)
-                    .WithOne(e => e.Contact)
-                    .HasForeignKey<Contact>(e => e.WorkTypeId)
+                    .WithMany(w => w.Contacts)
+                    .HasForeignKey(e => e.WorkTypeId)
                     .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("FK_Contact_enum.Work.Type");
             });
