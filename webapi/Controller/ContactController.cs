@@ -7,7 +7,7 @@ namespace webapi.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class ContactController : ControllerBase
     {
         private readonly IContactService _contactService;

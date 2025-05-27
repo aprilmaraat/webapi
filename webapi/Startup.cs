@@ -34,6 +34,7 @@ namespace webapi
             services.AddSingleton<IJwtSetting>(jwtSetting);
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<ILocationService, LocationService>();
+            services.AddTransient<IContactService, ContactService>();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
