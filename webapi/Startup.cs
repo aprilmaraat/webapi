@@ -1,6 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using webapi.EF;
 using webapi.EF.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using webapi.Services;
+using webapi.Utilities;
 
 namespace webapi
 {
@@ -8,7 +13,7 @@ namespace webapi
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
-            IConfigurationBuilder builder = GetConfigurationBuilder(environment);
+            IConfigurationBuilder builder = GetConfigurationBuilder(environment).AddConfiguration(configuration);
             Configuration = builder.Build();
         }
 
@@ -17,14 +22,36 @@ namespace webapi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            WebApi? webApiCache = Configuration.GetSection("WebApi").Get<WebApi>();
+            JwtSetting? jwtSetting = Configuration.GetSection("JwtSettings").Get<JwtSetting>();
+
+            if (jwtSetting == null)
+            {
+                throw new InvalidOperationException("JwtSettings configuration section is missing or invalid.");
+            }
+
             services.AddDbContext<WebApiContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("Master")));
-            if (webApiCache != null)
+            services.AddSingleton<IJwtSetting>(jwtSetting);
+            services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<ILocationService, LocationService>();
+            services.AddAuthentication(options =>
             {
-                services.AddSingleton<IAppCache>((IAppCache)webApiCache);
-            }
-            //services.AddTransient<ITokenService, TokenService>();
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSetting.Issuer,
+                    ValidAudience = jwtSetting.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.SecretKey))
+                };
+            });
             services.AddControllers();
             services.AddCors();
         }
@@ -46,6 +73,8 @@ namespace webapi
                 app.UseDeveloperExceptionPage();
             }
             app.UseRouting();
+            app.UseCors(t => t.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseHttpsRedirection();
             app.UseEndpoints(endpoints =>

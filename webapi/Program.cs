@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-
-namespace webapi
+﻿namespace webapi
 {
     public class Program
     {
