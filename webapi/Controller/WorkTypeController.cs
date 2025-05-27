@@ -24,4 +24,5 @@ namespace webapi.Controller
             var result = await _workTypeService.GetWorkTypesAsync();
             return Ok(result);
         }
+    }
 }
