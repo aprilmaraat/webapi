@@ -2,26 +2,26 @@
 
 namespace webapi.EF.Models
 {
-    public class Contact
+    public class Contact : BaseEntity
     {
-        public Guid Id { get; set; }
         public string Email { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string MobileNumber { get; set; } = string.Empty;
-        public string Location { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public Guid LocationId { get; set; }
         public byte WorkTypeId { get; set; }
+        
         [JsonIgnore]
         public virtual EnumWorkType WorkType { get; set; } = null!; // Fix for CS8618: Initialize with null-forgiving operator
-
-        // Fix for IDE0290: Use primary constructor
-        public Contact(Guid id, string email, string fullName, string mobileNumber, string location, byte workTypeId, DateTime createdAt)
+        [JsonIgnore]
+        public virtual Location Location { get; set; } = null!;
+        public Contact() { }
+        public Contact(Guid id, string email, string fullName, string mobileNumber, Guid locationId, byte workTypeId, DateTime createdAt)
         {
             Id = id;
             Email = email;
             FullName = fullName;
             MobileNumber = mobileNumber;
-            Location = location;
+            LocationId = locationId;
             WorkTypeId = workTypeId;
             CreatedAt = createdAt;
         }

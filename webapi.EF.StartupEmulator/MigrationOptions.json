@@ -1,5 +1,5 @@
 {
   "ConnectionStrings": {
-    "Business": "Data Source=localhost\\SQLEXPRESS;Initial Catalog=\"WebApi\";User ID=sa;Password=pass123456"
+    "Business": "Data Source=localhost\\SQLEXPRESS;Initial Catalog=\"WebApi\";User ID=sa;Password=pass123456;TrustServerCertificate=True;"
   }
 }
