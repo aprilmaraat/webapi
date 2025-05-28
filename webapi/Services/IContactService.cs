@@ -1,5 +1,6 @@
 ﻿using webapi.EF.Models;
 using webapi.Utilities.HelperModels;
+using webapi.DTOs;
 
 namespace webapi.Services
 {
@@ -7,7 +8,7 @@ namespace webapi.Services
     {
         Task<PagedResult<Contact>> GetContactsAsync(int pageNumber, int pageSize);
         Task<Contact?> GetContactByIdAsync(int id);
-        Task<Contact> CreateContactAsync(Contact contact);
+        Task<Contact> CreateContactAsync(ContactDTO contact);
         Task<Contact> UpdateContactAsync(Contact contact);
         Task<bool> DeleteContactAsync(Guid id);
     }

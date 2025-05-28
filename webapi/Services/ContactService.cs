@@ -2,6 +2,7 @@
 using webapi.EF;
 using webapi.EF.Models;
 using webapi.Utilities.HelperModels;
+using webapi.DTOs;
 
 namespace webapi.Services
 {
@@ -36,15 +37,27 @@ namespace webapi.Services
             return await _context.Contacts.FindAsync(id);
         }
 
-        public async Task<Contact> CreateContactAsync(Contact contact)
+        public async Task<Contact> CreateContactAsync(ContactDTO contact)
         {
             if (contact == null)
             {
                 throw new ArgumentNullException(nameof(contact));
             }
-            _context.Contacts.Add(contact);
+
+            // Ensure all required parameters are passed to the Contact constructor
+            var newContact = new Contact
+            {
+                Id = contact.Id,
+                Email = contact.Email,
+                FullName = contact.FullName,
+                MobileNumber = contact.MobileNumber,
+                LocationId = contact.LocationId ?? Guid.Empty, // Handle nullable LocationId
+                WorkTypeId = contact.WorkTypeId ?? 0, // Handle nullable WorkTypeId
+            };
+
+            _context.Contacts.Add(newContact);
             await _context.SaveChangesAsync();
-            return contact;
+            return newContact;
         }
 
         public async Task<Contact> UpdateContactAsync(Contact contact)

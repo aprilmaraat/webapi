@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using webapi.EF.Models;
 using webapi.Services;
+using webapi.DTOs;
 
 namespace webapi.Controller
 {
@@ -40,7 +40,7 @@ namespace webapi.Controller
             return Ok(contact);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateContact([FromBody] Contact contact)
+        public async Task<IActionResult> CreateContact([FromBody] ContactDTO contact)
         {
             if (contact == null)
             {
